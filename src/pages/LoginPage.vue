@@ -112,8 +112,10 @@ export default defineComponent({
 
         localStorage.setItem('access_token', response.data.access_token)
         localStorage.setItem('name', this.credentials.username)
+        localStorage.setItem('role', response.data.role)
         localStorage.getItem('access_token')
         localStorage.getItem('name')
+        console.log(response.data.role)
         console.log(response.data)
         this.goTo('home')
       } catch (error) {

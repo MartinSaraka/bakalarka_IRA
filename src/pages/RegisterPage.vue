@@ -38,7 +38,7 @@
           color="primary"
           rounded
           :loading="loading"
-          @click="onSubmit"
+          @click="onSubmit "
         />
 <q-btn label="Prihlásenie" size="sm" flat :to="{ name: 'login' }"></q-btn>
 </q-card-actions>
