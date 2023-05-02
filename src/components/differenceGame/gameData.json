@@ -1,0 +1,15 @@
+[
+  {
+    "image1": "~assets/img/games.jpg",
+    "image2": "~assets/img/games.jpg",
+    "differences": [
+      { "id": 1,"x": 40, "y": 36, "width": 30, "height": 30, "found":false, "type":"hviezda nájdená" },
+      { "id": 2,"x": 38, "y": 161, "width": 30, "height": 30, "found":false, "type":"darček v ponožke nájdený" },
+      { "id": 3,"x": 150, "y": 136, "width": 30, "height": 30, "found":false, "type":"modrý darček nájdený" },
+      { "id": 4,"x": 370, "y": 125, "width": 30, "height": 30, "found":false, "type":"žlty darček nájdený" },
+      { "id": 5,"x": 328, "y": 158, "width": 30, "height": 30, "found":false, "type":"úsmev nájdený" },
+      { "id": 6,"x": 208, "y": 190, "width": 30, "height": 30, "found":false, "type":"brada nájdená" },
+      { "id": 7,"x": 16, "y": 215, "width": 30, "height": 30, "found":false, "type":"ponožka nájdená" }
+    ]
+  }
+]
