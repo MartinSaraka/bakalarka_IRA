@@ -16,11 +16,15 @@
     </q-card-actions>
 
     <q-table
+      no-data-label=" Žiadne štatistiky z tejto hry"
+      no-results-label="Žiadne štatistiky z tejto hry"
+      rows-per-page-label="Maximálny počet zobrazených zaznamov na stranu"
+      hide-selected-banner
       :columns="columns"
       :rows="statisticList"
       row-key="id"
       :loading="!isLoaded"
-      loading-text="Loading... Please wait"
+      loading-text="Počkajte"
       selection="multiple"
       v-model:selected="selectedRows"
       :filter="filter"
@@ -81,7 +85,7 @@
             <q-input
               outlined
               v-model="filter.nickName"
-              label="Filtruj meno použitevaľa"
+              label="Filtruj meno použivateľa"
               label-color="cyan"
               dense
               dark
@@ -122,7 +126,8 @@
         </q-tr>
       </template>
 
-      <template v-slot:pagination="scope">
+      <template v-slot:pagination="scope" >
+
         <q-btn
           v-if="scope.pagesNumber > 2"
           icon="first_page"
@@ -180,7 +185,9 @@ import {
   useGetItems
 
 } from 'src/composables/StatisticListServices'
-
+import {
+  useGetUser
+} from 'src/composables/UserServices'
 const isLoaded = ref(false)
 const initialPagination = ref({
   sortBy: 'id',
@@ -193,7 +200,7 @@ const filter = ref({
   clicks: '',
   date: ''
 } as StatisticListFilter)
-const user = ref(localStorage.getItem('name'))
+const user = ref()
 const statisticList = ref([] as StatisticList[])
 const allStatisticList = ref([] as StatisticList[])
 const pexesoList = ref([] as StatisticList[])
@@ -273,6 +280,15 @@ function getTodoList () {
   isLoaded.value = false
   switch (switchList.value) {
     default:
+
+      useGetUser().then((statisticList) => {
+        if (statisticList) {
+          user.value = statisticList
+        } else {
+          statisticList.value = []
+        }
+      })
+
       useGetItems().then((statisticList) => {
         if (statisticList) {
           mapTodoList(statisticList)
@@ -316,17 +332,28 @@ function filterData (rows: StatisticList[], terms: StatisticListFilter) {
 }
 
 function mapTodoList (usrs: StatisticListREST[]) {
-  console.log(usrs.value)
   allStatisticList.value = usrs.map((usr: StatisticListREST) => usr)
-  pexesoList.value = allStatisticList.value.filter(function (value) {
-    return (value.gameName === 'Pexeso' && value.nickName === user.value)
-  })
-  reactList.value = allStatisticList.value.filter(function (value) {
-    return (value.gameName === 'Reakcie' && value.nickName === user.value)
-  })
-  differenceList.value = allStatisticList.value.filter(function (value) {
-    return (value.gameName === 'NajdiRozdiely' && value.nickName === user.value)
-  })
+  if (user.value.patientsnames) {
+    pexesoList.value = allStatisticList.value.filter(function (value) {
+      return (value.gameName === 'Pexeso' && (value.nickName === user.value.nickname || user.value.patientsnames.includes(value.nickName)))
+    })
+    reactList.value = allStatisticList.value.filter(function (value) {
+      return (value.gameName === 'Reakcie' && (value.nickName === user.value.nickname || user.value.patientsnames.includes(value.nickName)))
+    })
+    differenceList.value = allStatisticList.value.filter(function (value) {
+      return (value.gameName === 'NajdiRozdiely' && (value.nickName === user.value.nickname || user.value.patientsnames.includes(value.nickName)))
+    })
+  } else {
+    pexesoList.value = allStatisticList.value.filter(function (value) {
+      return (value.gameName === 'Pexeso' && value.nickName === user.value.nickname)
+    })
+    reactList.value = allStatisticList.value.filter(function (value) {
+      return (value.gameName === 'Reakcie' && value.nickName === user.value.nickname)
+    })
+    differenceList.value = allStatisticList.value.filter(function (value) {
+      return (value.gameName === 'NajdiRozdiely' && value.nickName === user.value.nickname)
+    })
+  }
   if (switchList.value === 'pexeso') {
     statisticList.value = pexesoList.value
   } else if (switchList.value === 'react') {
@@ -336,7 +363,6 @@ function mapTodoList (usrs: StatisticListREST[]) {
   } else {
     statisticList.value = pexesoList.value
   }
-  console.log(statisticList)
 }
 
 onMounted(() => {

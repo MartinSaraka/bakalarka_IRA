@@ -6,6 +6,7 @@ import {
 } from 'vue3-dropdown-navbar'
 const isLoggedIn = ref(!!localStorage.getItem('access_token'))
 const isDoctor = localStorage.getItem('role') === 'doctor'
+const name = localStorage.getItem('name')
 function logout () {
   localStorage.removeItem('access_token')
   isLoggedIn.value = false
@@ -48,7 +49,7 @@ function logout () {
   </div>
   <div>
       <div v-if="isLoggedIn">
-    <TheDropDownItem @click="logout" link="/">Odhlásiť sa</TheDropDownItem>
+    <TheDropDownItem @click="logout" link="/">Odhlásiť sa ({{name}})</TheDropDownItem>
   </div>
   </div>
   </TheDropDownNavbar>

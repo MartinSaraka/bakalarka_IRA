@@ -32,6 +32,31 @@ export async function useGetResponseData (
     return null
   }
 }
+export async function useGetResponseDataWithParam (
+  url: string,
+  componentName: string,
+  canuseSendAlert = true
+) {
+  try {
+    const response = await axios.get(url, { params: { nickName: localStorage.getItem('name') } })
+    return response.data
+  } catch (error: any) {
+    const statusCode = error.response?.status
+    if (statusCode === 401) {
+      // zbytocne teraz
+      return null
+    }
+    if (statusCode === 404) {
+      return null
+    }
+    if (canuseSendAlert) {
+      const errorMessage = error.response?.data?.message || 'not selected'
+      const errorType = statusCode === 404 ? 'warning' : 'negative'
+      useSendAlert(componentName, errorType, errorMessage, '')
+    }
+    return null
+  }
+}
 
 export async function useGetResponseStream (url: string, componentName: string) {
   return axios

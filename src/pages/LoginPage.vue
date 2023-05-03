@@ -37,9 +37,9 @@
       <q-form ref="form" class="q-gutter-md">
         <q-card-section>
           <q-input
-            name="username"
-            id="username"
-            v-model.trim="credentials.username"
+            name="nickName"
+            id="nickName"
+            v-model.trim="credentials.nickName"
             type="text"
             label="Použivateľské meno"
             autofocus
@@ -88,14 +88,16 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
 import { useRouter } from 'vue-router'
+import { useQuasar } from 'quasar'
 import axios from 'axios'
 export default defineComponent({
   name: 'LoginPage',
   data () {
     return {
-      credentials: { username: '', password: '', remember: false },
+      credentials: { nickName: '', password: '', remember: false },
       showPassword: false,
-      router: useRouter()
+      router: useRouter(),
+      $q: useQuasar()
     }
   },
 
@@ -106,20 +108,28 @@ export default defineComponent({
     async onSubmit () {
       try {
         const response = await axios.post('http://localhost:5000/login', {
-          username: this.credentials.username,
+          nickName: this.credentials.nickName,
           password: this.credentials.password
         })
 
         localStorage.setItem('access_token', response.data.access_token)
-        localStorage.setItem('name', this.credentials.username)
+        localStorage.setItem('name', this.credentials.nickName)
         localStorage.setItem('role', response.data.role)
         localStorage.getItem('access_token')
         localStorage.getItem('name')
-        console.log(response.data.role)
-        console.log(response.data)
+        this.$q.notify({
+          type: 'positive',
+          message: 'Podarilo sa prihlásiť',
+          position: 'top'
+        })
         this.goTo('home')
       } catch (error) {
         console.error(error)
+        this.$q.notify({
+          type: 'negative',
+          message: 'Nepodarilo sa prihlásiť, skontroluj údaje',
+          position: 'top'
+        })
       }
     }
   }

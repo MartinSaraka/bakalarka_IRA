@@ -6,12 +6,14 @@
 <script>
 
 import axios from 'axios'
+import { useQuasar } from 'quasar'
 export default {
   props: ['score'],
   data () {
     return {
       rank: null,
-      isLoggedIn: !!localStorage.getItem('access_token')
+      isLoggedIn: !!localStorage.getItem('access_token'),
+      $q: useQuasar()
     }
   },
   mounted () {
@@ -36,10 +38,19 @@ export default {
           clicks: 1,
           date: new Date().toLocaleString()
         })
-
+        this.$q.notify({
+          type: 'positive',
+          message: 'Uložená štatistika',
+          position: 'top'
+        })
         console.log(response.data)
       } catch (error) {
         console.error(error)
+        this.$q.notify({
+          type: 'negative',
+          message: 'Nepodarilo sa uložiť štatistiku',
+          position: 'top'
+        })
       }
     }
   }

@@ -1,10 +1,12 @@
-<template>
-  <div class="container">
+<template><Suspense>
+  <template #default>
+  <div v-if="ready" class="container">
   <div class="content-wrapper">
     <div class="q-pa-md q-gutter-md">
 
       <q-banner class="banner q-mb-lg">
-        <div class="text-h5">Pridanie pacienta pomocou jeho špecialného kódu pre sledovanie jeho štatistík.</div>
+
+        <div  class="text-h5">Vitaj doktor/ošetrujúci/zodpovedni pomocou jeho špecialného kódu pre sledovanie použivateľových/pacientových štatistík.</div>
       </q-banner>
 
   <div class="q-pa-xs" style="width: 200px">
@@ -14,32 +16,90 @@
     <div class="content q-my-lg-xl ">
       <q-form @submit.prevent="submitForm">
     <q-input  outlined v-model="inputValue" label="Zadaj špecialny kód pacienta" />
-    <q-btn class="q-ma-lg" color="primary" type="submit" label="Pridaj pacienta" />
+    <q-btn class="q-ma-lg" color="cyan" type="submit" label="Pridaj pacienta" />
   </q-form>
-    </div> </div>
+
+    </div>
+  <div ><q-page v-if="user.patientsnames">
+    <q-list bordered separator>
+      Mena pacientov
+      <q-separator></q-separator>
+      <q-item v-for="(name, index) in user.patientsnames" :key="index">
+        <q-item-section>
+          {{ name }}
+        </q-item-section>
+      </q-item>
+    </q-list>
+  </q-page>
+    <!-- <span v-for="turn in score"> </span> /> -->
+
+  </div>
+  </div>
       </div>
 
   </div>
-
+</template>
+<template #fallback>
+      <div>Načitavam data...</div>
+    </template>
+</Suspense>
 </template>
 
-<script>
-import { ref } from 'vue'
+<script setup>
+import { onMounted, ref, watch } from 'vue'
+import axios from 'axios'
+import { QList, QItem, QItemSection, useQuasar } from 'quasar'
+import {
+  useGetUser
+} from 'src/composables/UserServices'
+const inputValue = ref('')
+const user = ref()
+const ready = ref(false)
+const q = useQuasar()
 
-export default {
-  setup () {
-    const inputValue = ref('')
-
-    function submitForm () {
-      console.log('Submitted value:', inputValue.value)
-    }
-
-    return {
-      inputValue,
-      submitForm
-    }
+async function submitForm () {
+  try {
+    const response = await axios.post('http://localhost:5000/user/addPatient', {
+      nickNameDoctor: localStorage.getItem('name'),
+      nickNamePatient: inputValue.value
+    })
+    console.log(response.data)
+    q.notify({
+      type: 'positive',
+      message: 'Pridaný použivateľ/pacient',
+      position: 'top'
+    })
+    getTodoList()
+  } catch (error) {
+    q.notify({
+      type: 'negative',
+      message: 'Pacient už pridaný alebo neexistuje',
+      position: 'top'
+    })
   }
 }
+
+function getTodoList () {
+  useGetUser().then((statisticList) => {
+    if (statisticList) {
+      user.value = statisticList
+      console.log(user.value)
+    } else {
+      statisticList.value = []
+    }
+  })
+}
+watch(
+  () => user,
+  (newValue, oldValue) => {
+    console.log('change in user')
+  },
+  { deep: true }
+)
+onMounted(async () => {
+  getTodoList()
+  ready.value = true
+})
 </script>
 
 <style>

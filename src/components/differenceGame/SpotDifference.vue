@@ -41,6 +41,7 @@
 </template>
 <script setup>
 import { ref, computed, onMounted, onUnmounted, watch } from 'vue'
+import { useQuasar } from 'quasar'
 import gameData from './gameData.json'
 import axios from 'axios'
 const isLoggedIn = ref(!!localStorage.getItem('access_token'))
@@ -50,6 +51,7 @@ const alertDialog = ref(false)
 const clicks = ref(0)
 const timer = ref(0)
 let timerInterval
+const q = useQuasar()
 const currentLevel = ref(0)
 const differencesFound = ref(0)
 const maxDifferences = computed(() => gameData[currentLevel.value].differences.length)
@@ -74,8 +76,6 @@ const processClick = (event) => {
   if (differencesFound.value === maxDifferences.value) {
     stopTimer()
     if (isLoggedIn.value) {
-      console.log('zalogoval som skore na spotDifference game')
-      console.log(localStorage.getItem('name'))
       submitScore()
     }
 
@@ -86,11 +86,9 @@ function reset () {
   clicks.value = 0
   timer.value = 0
   differencesFound.value = 0
-  console.log(levelData.value)
   for (const difference of levelData.value.differences) {
     if (difference.found) { difference.found = false }
   }
-  console.log(levelData.value)
 }
 async function submitScore () {
   try {
@@ -101,9 +99,18 @@ async function submitScore () {
       clicks: clicks.value,
       date: new Date().toLocaleString()
     })
-
+    q.notify({
+      type: 'positive',
+      message: 'Uložená štatistika',
+      position: 'top'
+    })
     console.log(response.data)
   } catch (error) {
+    q.notify({
+      type: 'negative',
+      message: 'Nepodarila sa uložiť štatistika',
+      position: 'top'
+    })
     console.error(error)
   }
 }

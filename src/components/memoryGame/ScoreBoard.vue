@@ -32,6 +32,7 @@
 </template>
 
 <script>
+import { useQuasar } from 'quasar'
 import axios from 'axios'
 export default {
   name: 'ScoreBoard',
@@ -39,6 +40,7 @@ export default {
     score: {
       type: Array,
       default: () => null
+
     }
   },
   computed: {
@@ -71,10 +73,19 @@ export default {
           clicks: this.turnCount,
           date: new Date().toLocaleString()
         })
-
+        this.$q.notify({
+          type: 'positive',
+          message: 'Uložená štatistika',
+          position: 'top'
+        })
         console.log(response.data)
       } catch (error) {
         console.error(error)
+        this.$q.notify({
+          type: 'negative',
+          message: 'Nepodarilo sa uložiť štatistiku',
+          position: 'top'
+        })
       }
     }
   },
@@ -82,8 +93,17 @@ export default {
     // whenever question changes, this function will run
     score: {
       handler (newValue, oldValue) {
-        console.log(this.score)
-        console.log(this.matchCount())
+        console.log(this.score.length)
+        console.log(this.scoreTmp)
+        if (this.scoreTmp + 1 === this.score.length) {
+          console.log('takto')
+          this.scoreTmp = this.score.length
+        } else {
+          clearInterval(this.timerInterval)
+          this.time = 0
+          this.startTimer()
+          this.scoreTmp = 0
+        }
         if (this.matchCount() === 8) {
           if (this.isLoggedIn) {
             console.log('zalogoval som pri memoryGAme')
@@ -106,8 +126,10 @@ export default {
       isLoggedIn: !!localStorage.getItem('access_token'),
       alert: false,
       time: 0,
+      scoreTmp: 0,
       timerInterval: null,
-      timeDisplay: '00:00'
+      timeDisplay: '00:00',
+      $q: useQuasar()
     }
   }
 }

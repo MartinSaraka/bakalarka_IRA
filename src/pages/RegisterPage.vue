@@ -50,6 +50,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue'
+import { useQuasar } from 'quasar'
 import { useRouter } from 'vue-router'
 import axios from 'axios'
 export default defineComponent({
@@ -58,6 +59,7 @@ export default defineComponent({
     return {
       form: { nick_name: '', name: '', surname: '', email: '', password: '' },
       showPassword: false,
+      $q: useQuasar(),
       router: useRouter()
     }
   },
@@ -77,8 +79,18 @@ export default defineComponent({
         })
         this.goTo('login')
         console.log(response.data)
+        this.$q.notify({
+          type: 'positive',
+          message: 'Podarilo sa zaregistrovať',
+          position: 'top'
+        })
       } catch (error) {
         console.error(error)
+        this.$q.notify({
+          type: 'negative',
+          message: 'Nepodarilo sa registrovať, použivatelske meno existuje/zle vyplnené polia',
+          position: 'top'
+        })
       }
     }
   }
