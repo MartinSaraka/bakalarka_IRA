@@ -20,7 +20,7 @@
       no-results-label="Žiadne štatistiky z tejto hry"
       rows-per-page-label="Maximálny počet zobrazených zaznamov na stranu"
       hide-selected-banner
-      :columns="columns"
+      :columns="Stlpce"
       :rows="statisticList"
       row-key="id"
       :loading="!isLoaded"
@@ -47,7 +47,7 @@
           :display-value="$q.lang.table.columns"
           emit-value
           map-options
-          :options="columns"
+          :options="Stlpce"
           color="cyan"
           option-value="name"
           options-cover
@@ -206,7 +206,7 @@ const allStatisticList = ref([] as StatisticList[])
 const pexesoList = ref([] as StatisticList[])
 const reactList = ref([] as StatisticList[])
 const differenceList = ref([] as StatisticList[])
-const columns = ref([
+const Stlpce = ref([
 
   {
     name: 'gameName',

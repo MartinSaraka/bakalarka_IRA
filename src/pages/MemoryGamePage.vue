@@ -1,5 +1,8 @@
 <template>
   <div id="app" class="app memoryGame">
+    <q-banner class="banner q-mb-lg">
+        <div class="text-h5">Pexeso - spoj rovnaké symboly!</div>
+      </q-banner>
     <div class="toolbar">
       <button @click="reset" class="btn">
         Reštartovať hru
@@ -10,6 +13,7 @@
       @reset="reset"
     />
   </div>
+
     <section
       class="grid"
     >
@@ -180,6 +184,14 @@ export default {
 </script>
 
 <style lang="scss">
+.banner {
+  background-color: #c36836;
+  color: white;
+  padding: 1.5rem;
+  border-radius: 10px;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
 .memoryGame {
   background: rgb(232, 230, 230);
   color: $c-red;

@@ -6,7 +6,7 @@
 
       <q-banner class="banner q-mb-lg">
 
-        <div  class="text-h5">Vitaj doktor/ošetrujúci/zodpovedni pomocou jeho špecialného kódu pre sledovanie použivateľových/pacientových štatistík.</div>
+        <div  class="text-h5">Pridaj pacienta pod svoju doktorskú správu zadaním jeho použivateľského mena</div>
       </q-banner>
 
   <div class="q-pa-xs" style="width: 200px">
@@ -15,7 +15,7 @@
 
     <div class="content q-my-lg-xl ">
       <q-form @submit.prevent="submitForm">
-    <q-input  outlined v-model="inputValue" label="Zadaj špecialny kód pacienta" />
+    <q-input  outlined v-model="inputValue" label="Zadaj použivateľské meno pacienta" />
     <q-btn class="q-ma-lg" color="cyan" type="submit" label="Pridaj pacienta" />
   </q-form>
 
